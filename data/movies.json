@@ -1,0 +1,7 @@
+[
+    { "id": 1, "name": "purple hearts", "releaseYear": 2023, "duration": 180 },
+    { "id": 2, "name": "Die Heart", "releaseYear": 2018, "duration": 90 },
+    { "id": 4, "name": "hello", "releaseYear": 2011, "duration": 200 },
+    { "id": 5, "name": "we die", "releaseYear": 2011, "duration": 160 }
+  ]
+  

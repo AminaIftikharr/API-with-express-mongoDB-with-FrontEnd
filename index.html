@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie CRUD App</title>
+</head>
+<body>
+
+  <h1>Movie CRUD App</h1>
+
+  <form id="movieForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required>
+
+    <label for="releaseYear">Release Year:</label>
+    <input type="number" id="releaseYear" required>
+
+    <label for="duration">Duration:</label>
+    <input type="number" id="duration" required>
+
+    <button type="button" onclick="createMovie()">Create Movie</button>
+  </form>
+
+  <form id="updateForm">
+    <h2>Update Movie</h2>
+
+    <label for="updateMovieId">Movie ID to Update:</label>
+    <input type="text" id="updateMovieId" required>
+
+    <label for="updateField">Select Field to Update:</label>
+    <select id="updateField">
+      <option value="name">Name</option>
+      <option value="releaseYear">Release Year</option>
+      <option value="duration">Duration</option>
+    </select>
+
+    <label for="updateValue">New Value:</label>
+    <input type="text" id="updateValue" required>
+
+    <button type="button" onclick="updateMovie()">Update Movie</button>
+  </form>
+
+  <form id="deleteForm">
+    <h2>Delete Movie</h2>
+
+    <label for="deleteMovieId">Movie ID to Delete:</label>
+    <input type="text" id="deleteMovieId" required>
+
+    <button type="button" onclick="deleteMovie()">Delete Movie</button>
+  </form>
+
+  <ul id="movieList"></ul>
+
+  <button onclick="getMovies()">Get Movies</button>
+
+  <script>
+    async function getMovies() {
+      const response = await fetch('http://localhost:3000/api/v1/movies');
+      const movies = await response.json();
+      
+      const movieList = document.getElementById('movieList');
+      movieList.innerHTML = '';
+      
+      movies.data.movies.forEach(movie => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${movie.name} - ${movie.releaseYear} - ${movie.duration} minutes`;
+
+        movieList.appendChild(listItem);
+      });
+    }
+
+    async function createMovie() {
+      const name = document.getElementById('name').value;
+      const releaseYear = parseInt(document.getElementById('releaseYear').value);
+      const duration = parseInt(document.getElementById('duration').value);
+
+      await fetch('http://localhost:3000/api/v1/movies', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, releaseYear, duration }),
+      });
+
+      getMovies();
+    }
+
+    async function updateMovie() {
+      const movieId = document.getElementById('updateMovieId').value;
+      const field = document.getElementById('updateField').value;
+      const value = document.getElementById('updateValue').value;
+
+      await fetch(`http://localhost:3000/api/v1/movies/${movieId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ [field]: value }),
+      });
+
+      getMovies();
+    }
+
+    async function deleteMovie() {
+      const movieId = document.getElementById('deleteMovieId').value;
+      if (movieId) {
+        await fetch(`http://localhost:3000/api/v1/movies/${movieId}`, {
+          method: 'DELETE',
+        });
+
+        getMovies();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      getMovies();
+    });
+  </script>
+
+</body>
+</html>
